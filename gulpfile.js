@@ -7,6 +7,8 @@ var gulp = require('gulp');
 var path = require('path');
 var _ = require('lodash');
 var $ = require('gulp-load-plugins')({lazy: true});
+var git = require('gulp-git');
+
 
 var colors = $.util.colors;
 var envenv = $.util.env;
@@ -371,6 +373,24 @@ gulp.task('bump', function() {
  * Optimize the code and re-load browserSync
  */
 gulp.task('browserSyncReload', ['optimize'], browserSync.reload);
+
+gulp.task('fetch', function(done) {
+    git.fetch('origin', '', function(err) {
+        if (err) {
+            throw err;
+        } else {
+            log('Fetching origin...');
+            git.merge('origin/master', function(err) {
+                if (err) {
+                    throw err;
+                } else {
+                    log('Merging in origin/master to current branch');
+                    done();
+                }
+            });
+        }
+    });
+});
 
 ////////////////
 
